@@ -528,7 +528,7 @@ def export_routes_excel():
 def index():
     # Asegurar que existan promotores y PDVs sembrados en la BD
     if Promotor.query.count() == 0 or PDV.query.count() == 0:
-        from seed import seed_database
+        from scripts.maintenance.seed import seed_database
         seed_database()
         
     promotores = int(request.values.get("promotores", 5))

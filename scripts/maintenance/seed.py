@@ -1,4 +1,3 @@
-# seed.py
 import pandas as pd
 from app import app
 from models import db, Usuario, PDV, Promotor

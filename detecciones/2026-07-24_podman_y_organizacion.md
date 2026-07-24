@@ -41,11 +41,11 @@ Estos archivos son parte activa de la aplicación y no conviene eliminarlos:
 
 Estos scripts son importantes, pero su función es administrativa o de mantenimiento:
 
-* `seed.py`
-* `refresh_pdvs.py`
-* `refresh_promotores.py`
-* `deactivate_legacy_pdvs.py`
-* `deactivate_seed_promotores.py`
+* `scripts/maintenance/seed.py`
+* `scripts/maintenance/refresh_pdvs.py`
+* `scripts/maintenance/refresh_promotores.py`
+* `scripts/maintenance/deactivate_legacy_pdvs.py`
+* `scripts/maintenance/deactivate_seed_promotores.py`
 
 ### Artefactos generados
 
@@ -61,7 +61,7 @@ Estos directorios aparecen por la ejecución local y deben seguir ignorados:
 Estos directorios sirven de apoyo al proyecto, pero no forman parte del flujo central de ejecución:
 
 * `Csv/` contiene archivos de ejemplo para carga manual.
-* `data/` contiene el CSV de semilla usado por `seed.py`.
+* `data/` contiene el CSV de semilla usado por `scripts/maintenance/seed.py`.
 * `private/` reúne notas técnicas y registros de análisis locales; conviene mantenerlo fuera del artefacto de despliegue.
 
 ## Conclusión

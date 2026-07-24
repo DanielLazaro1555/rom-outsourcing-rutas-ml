@@ -80,7 +80,7 @@ El servidor web estará disponible en [http://localhost:5000](http://localhost:5
 La raíz del repositorio contiene solo los componentes que se usan para ejecutar o mantener la aplicación:
 
 * **Núcleo de la app:** `app.py`, `models.py`, `planificador.py`, `planning_window.py`, `pdv_importer.py`, `promotor_importer.py`, `password_reset.py` y `ml/`.
-* **Utilidades operativas:** `seed.py`, `refresh_pdvs.py`, `refresh_promotores.py`, `deactivate_legacy_pdvs.py` y `deactivate_seed_promotores.py`.
+* **Utilidades operativas:** `scripts/maintenance/seed.py`, `scripts/maintenance/refresh_pdvs.py`, `scripts/maintenance/refresh_promotores.py`, `scripts/maintenance/deactivate_legacy_pdvs.py` y `scripts/maintenance/deactivate_seed_promotores.py`.
 * **Ejecución en contenedor:** `Containerfile`, `compose.yaml`, `entrypoint.sh` y `.containerignore`.
 * **Datos de ejemplo:** `Csv/` y `data/`.
 * **Pruebas:** `tests/`.

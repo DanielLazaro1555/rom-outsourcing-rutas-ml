@@ -33,7 +33,7 @@ if db_url:
 
 # Ejecutar el sembrado de la base de datos
 echo "Ejecutando sembrado de la base de datos..." | tee -a logs/startup.log
-python seed.py 2>&1 | tee -a logs/startup.log
+python scripts/maintenance/seed.py 2>&1 | tee -a logs/startup.log
 
 # Iniciar la aplicación Flask
 echo "Iniciando Flask..." | tee -a logs/startup.log
