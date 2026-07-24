@@ -48,6 +48,8 @@ ACCESS_KEY=tu_clave_de_acceso_privada
 SECRET_KEY=tu_clave_secreta_flask
 ```
 
+Si desea una referencia lista para copiar, use [.env.example](/home/daniel/Documentos/Github/rom-outsourcing-rutas-ml/.env.example) como plantilla.
+
 > [!WARNING]
 > La clave configurada en `ACCESS_KEY` dentro de `.env` se utiliza únicamente en el arranque del backend para validar y proteger la inicialización segura del servidor. **No debe confundirse ni utilizarse como contraseña de login en la interfaz web** (para el inicio de sesión use `password`).
 
