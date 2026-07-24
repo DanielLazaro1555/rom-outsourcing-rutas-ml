@@ -70,3 +70,17 @@ El servidor web estará disponible en [http://localhost:5000](http://localhost:5
 * **Carga Masiva de Datos:** Los usuarios administradores pueden subir un archivo Excel o CSV con nuevos puntos de venta conteniendo las columnas `Punto de Venta`, `Latitud`, `Longitud`, `Distrito` y `Zona`.
 * **Cálculo de KPIs Geodésicos:** Distancia acumulada basada en coordenadas terrestres reales (fórmula geodésica) para estimar el ahorro logístico y la huella ecológica (CO2).
 * **Exportación de Reportes:** Permite descargar la planeación de visitas en formatos de hoja de cálculo estructurada (`xlsx`) o formato de impresión limpio y optimizado (`PDF`).
+
+---
+
+## 📁 Estructura del Proyecto
+
+La raíz del repositorio contiene solo los componentes que se usan para ejecutar o mantener la aplicación:
+
+* **Núcleo de la app:** `app.py`, `models.py`, `planificador.py`, `planning_window.py`, `pdv_importer.py`, `promotor_importer.py`, `password_reset.py` y `ml/`.
+* **Utilidades operativas:** `seed.py`, `refresh_pdvs.py`, `refresh_promotores.py`, `deactivate_legacy_pdvs.py` y `deactivate_seed_promotores.py`.
+* **Ejecución en contenedor:** `Containerfile`, `compose.yaml`, `entrypoint.sh` y `.containerignore`.
+* **Datos de ejemplo:** `Csv/` y `data/`.
+* **Pruebas:** `tests/`.
+
+Los archivos generados en tiempo de ejecución, como `logs/`, `instance/`, `__pycache__/` y `venv/`, se mantienen fuera del control de versiones mediante `.gitignore`.
