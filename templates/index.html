@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Optimización de Rutas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0b0f19 0%, #111827 100%);
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --primary-glow: rgba(99, 102, 241, 0.35);
+            --card-bg: rgba(31, 41, 55, 0.45);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f9fafb;
+            --text-sub: #9ca3af;
+            --nav-bg: rgba(17, 24, 39, 0.85);
+            --success: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', sans-serif;
+            transition: all 0.25s ease;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* Top Navigation Bar */
+        nav {
+            background: var(--nav-bg);
+            border-bottom: 1px solid var(--card-border);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-logo {
+            background: var(--primary);
+            color: white;
+            font-weight: 800;
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 10px var(--primary-glow);
+        }
+
+        .nav-title h1 {
+            font-size: 1.25rem;
+            font-weight: 800;
+            letter-spacing: -0.01em;
+        }
+
+        .nav-title span {
+            font-size: 0.8rem;
+            color: var(--text-sub);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .nav-user {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-info {
+            text-align: right;
+        }
+
+        .user-email {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .user-role {
+            font-size: 0.75rem;
+            color: var(--primary);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            background: rgba(99, 102, 241, 0.15);
+            padding: 2px 8px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 2px;
+        }
+
+        .btn-logout {
+            background: rgba(239, 68, 68, 0.15);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .btn-logout:hover {
+            background: #ef4444;
+            color: white;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        /* Main Container */
+        .container {
+            flex: 1;
+            padding: 32px 40px;
+            max-width: 1600px;
+            width: 100%;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 360px 1fr;
+            gap: 32px;
+        }
+
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Sidebar Panels */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .card h2 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            letter-spacing: -0.01em;
+            color: var(--text-main);
+            border-left: 4px solid var(--primary);
+            padding-left: 10px;
+        }
+
+        /* Form styling */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-sub);
+            margin-bottom: 8px;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            background: rgba(17, 24, 39, 0.6);
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            padding: 12px 14px;
+            border-radius: 10px;
+            outline: none;
+            font-size: 0.9rem;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-glow);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(99, 102, 241, 0.2);
+            margin-top: 8px;
+        }
+
+        .btn-submit:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        /* Map Iframe */
+        .map-container {
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            height: 550px;
+        }
+
+        .map-container iframe {
+            border: none;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Table Card */
+        .table-card {
+            grid-column: 1 / -1;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .table-filters {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .table-filters select {
+            background: rgba(17, 24, 39, 0.6);
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            padding: 8px 12px;
+            border-radius: 8px;
+            outline: none;
+            font-size: 0.85rem;
+        }
+
+        /* Table Data Styling */
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        th {
+            background: rgba(17, 24, 39, 0.8);
+            color: var(--text-sub);
+            font-weight: 600;
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--card-border);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            color: var(--text-main);
+        }
+
+        tr:hover td {
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Badge status */
+        .badge-dia {
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* Action buttons */
+        .btn-action-nav {
+            text-decoration: none;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            padding: 4px 8px;
+            border-radius: 6px;
+            margin-right: 4px;
+            display: inline-block;
+            font-size: 0.8rem;
+        }
+
+        .btn-action-nav:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .btn-action-danger {
+            background: rgba(239, 68, 68, 0.15);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-action-danger:hover {
+            background: #ef4444;
+            color: white;
+            border-color: #ef4444;
+        }
+
+        /* Printing styling */
+        @media print {
+            nav, .sidebar, .map-container, .table-filters, .btn-action-nav, .alert, .kpi-grid {
+                display: none !important;
+            }
+            body {
+                background: white !important;
+                color: black !important;
+            }
+            .container {
+                display: block !important;
+                padding: 0 !important;
+            }
+            .table-card {
+                box-shadow: none !important;
+                border: none !important;
+                background: transparent !important;
+            }
+            table {
+                width: 100% !important;
+                border: 1px solid #000 !important;
+            }
+            th, td {
+                border: 1px solid #000 !important;
+                color: black !important;
+                padding: 8px !important;
+            }
+            th {
+                background: #f3f4f6 !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="nav-brand">
+            <div class="nav-logo">ROM</div>
+            <div class="nav-title">
+                <h1>Rutas Inteligentes</h1>
+                <span>Motor de ML (K-Means & TSP)</span>
+            </div>
+        </div>
+        <div class="nav-user">
+            <div class="user-info">
+                <div class="user-email">{{ current_user.email }}</div>
+                <div class="user-role">{{ current_user.rol }}</div>
+            </div>
+            <a href="/logout" class="btn-logout">Cerrar Sesión</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        
+        <!-- Alerts Block -->
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert" style="background:rgba(99, 102, 241, 0.12); border:1px solid rgba(99, 102, 241, 0.4); color:#a5b4fc; padding:14px 20px; border-radius:14px; margin-bottom:12px; font-size:0.95rem; grid-column: 1 / -1; display:flex; align-items:center; gap:8px;">
+                        <span>ℹ️ {{ message }}</span>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- KPI Stats Grid -->
+        <div class="kpi-grid" style="grid-column: 1 / -1; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; margin-bottom: 8px;">
+            <div class="card" style="display: flex; align-items: center; gap: 16px; padding: 20px;">
+                <div style="background: rgba(99, 102, 241, 0.15); color: var(--primary); padding: 12px; border-radius: 12px; font-size: 1.5rem;">🎯</div>
+                <div>
+                    <div style="font-size: 0.8rem; color: var(--text-sub); font-weight: 600; text-transform: uppercase;">Cobertura de Visitas</div>
+                    <div style="font-size: 1.5rem; font-weight: 800; color: var(--text-main);">100%</div>
+                </div>
+            </div>
+            <div class="card" style="display: flex; align-items: center; gap: 16px; padding: 20px;">
+                <div style="background: rgba(16, 185, 129, 0.15); color: #34d399; padding: 12px; border-radius: 12px; font-size: 1.5rem;">🛣️</div>
+                <div>
+                    <div style="font-size: 0.8rem; color: var(--text-sub); font-weight: 600; text-transform: uppercase;">Distancia Total (TSP)</div>
+                    <div style="font-size: 1.5rem; font-weight: 800; color: var(--text-main);">{{ total_km }} km</div>
+                </div>
+            </div>
+            <div class="card" style="display: flex; align-items: center; gap: 16px; padding: 20px;">
+                <div style="background: rgba(236, 72, 153, 0.15); color: #f472b6; padding: 12px; border-radius: 12px; font-size: 1.5rem;">🌱</div>
+                <div>
+                    <div style="font-size: 0.8rem; color: var(--text-sub); font-weight: 600; text-transform: uppercase;">Reducción de CO2</div>
+                    <div style="font-size: 1.5rem; font-weight: 800; color: var(--text-main);">{{ co2_saved }} kg</div>
+                </div>
+            </div>
+            <div class="card" style="display: flex; align-items: center; gap: 16px; padding: 20px;">
+                <div style="background: rgba(245, 158, 11, 0.15); color: #fbbf24; padding: 12px; border-radius: 12px; font-size: 1.5rem;">⏱️</div>
+                <div>
+                    <div style="font-size: 0.8rem; color: var(--text-sub); font-weight: 600; text-transform: uppercase;">Tiempo de Planificación</div>
+                    <div style="font-size: 1.5rem; font-weight: 800; color: var(--text-main);">5 seg (95% Ahorro)</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="sidebar">
+            <!-- Config panel -->
+            <div class="card">
+                <h2>Planificador ML</h2>
+                <form method="POST">
+                    <div class="form-group">
+                        <label for="zona">Plaza Operativa</label>
+                        <select id="zona" name="zona" required>
+                            {% for zona in zonas_disponibles %}
+                            <option value="{{ zona }}" {% if zona == zona_seleccionada %}selected{% endif %}>{{ zona }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="promotores">N° Promotores (Zonas)</label>
+                        <input type="number" id="promotores" name="promotores" value="{{ promotores }}" min="1" max="8" required>
+                    </div>
+                    <p style="font-size:0.8rem; color:var(--text-sub); line-height:1.5; margin:-4px 0 12px;">
+                        Promotores activos en {{ zona_seleccionada or 'la plaza seleccionada' }}: <strong>{{ promotores_disponibles|length }}</strong>
+                    </p>
+                    <div class="form-group">
+                        <label for="visitas">Visitas por Día (Carga)</label>
+                        <input type="number" id="visitas" name="visitas" value="{{ visitas }}" min="1" max="10" required>
+                    </div>
+                    <button type="submit" class="btn-submit">Generar rutas con ML</button>
+                </form>
+            </div>
+
+            {% if current_user.rol in ['admin', 'analista'] %}
+            <!-- Bulk Upload panel -->
+            <div class="card">
+                <h2>Carga Masiva de PDVs</h2>
+                <form method="POST" action="/upload_pdv" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="file">Seleccionar CSV o Excel</label>
+                        <input type="file" id="file" name="file" accept=".csv, .xlsx, .xls" required style="padding: 8px 10px;">
+                    </div>
+                    <p style="font-size:0.8rem; color:var(--text-sub); line-height:1.5; margin-bottom:12px;">
+                        Columnas base: <strong>Punto de Venta</strong>, <strong>Latitud</strong>, <strong>Longitud</strong>. Opcional: <strong>Prioridad</strong> con valores <strong>alta</strong>, <strong>media</strong>, <strong>baja</strong>.
+                    </p>
+                    <button type="submit" class="btn-submit" style="background:#10b981; box-shadow:0 4px 10px rgba(16, 185, 129, 0.2);">Importar Archivo</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2>Carga Masiva de Promotores</h2>
+                <form method="POST" action="/upload_promotores" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="promotores_file">Seleccionar CSV o Excel</label>
+                        <input type="file" id="promotores_file" name="file" accept=".csv, .xlsx, .xls" required style="padding: 8px 10px;">
+                    </div>
+                    <p style="font-size:0.8rem; color:var(--text-sub); line-height:1.5; margin-bottom:12px;">
+                        Columnas esperadas: <strong>Nombre</strong>, <strong>Email</strong>, <strong>Zona</strong>, <strong>Cuenta</strong>, <strong>Capacidad Diaria</strong>, <strong>Activo</strong>.
+                    </p>
+                    <button type="submit" class="btn-submit" style="background:#06b6d4; box-shadow:0 4px 10px rgba(6, 182, 212, 0.2);">Importar Promotores</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2>Registrar Ausencia</h2>
+                <p style="font-size:0.8rem; color:var(--text-sub); line-height:1.5; margin-bottom:12px;">
+                    Semana operativa actual: <strong>{{ semana_operativa_inicio }}</strong> a <strong>{{ semana_operativa_fin }}</strong>.
+                </p>
+                <form method="POST" action="/add_absence">
+                    <div class="form-group">
+                        <label for="absence_promotor_id">Promotor</label>
+                        <select id="absence_promotor_id" name="promotor_id" required>
+                            {% for promotor in promotores_disponibles %}
+                            <option value="{{ promotor.id }}">{{ promotor.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="fecha">Fecha</label>
+                        <input type="date" id="fecha" name="fecha" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="motivo">Motivo</label>
+                        <input type="text" id="motivo" name="motivo" placeholder="Vacaciones, descanso médico, etc.">
+                    </div>
+                    <button type="submit" class="btn-submit" style="background:#ef4444; box-shadow:0 4px 10px rgba(239, 68, 68, 0.2);">Registrar Ausencia</button>
+                </form>
+            </div>
+
+            <!-- Manual Add panel -->
+            <div class="card">
+                <h2>Agregar PDV a Ruta</h2>
+                <form method="POST" action="/add_route">
+                    <div class="form-group">
+                        <label for="promotor_id">Asignar a Promotor</label>
+                        <select id="promotor_id" name="promotor_id" required>
+                            {% for promotor in promotores_disponibles %}
+                            <option value="{{ promotor.id }}">{{ promotor.nombre }} (cap. {{ promotor.capacidad_diaria or 5 }})</option>
+                            {% endfor %}
+                        </select>
+                        {% if not promotores_disponibles %}
+                        <p style="font-size:0.8rem; color:var(--text-sub); margin-top:8px;">No hay promotores activos para esta plaza.</p>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label for="pdv_id">Punto de Venta</label>
+                        <select id="pdv_id" name="pdv_id" required style="max-width:100%;">
+                            {% for pdv in todos_pdvs %}
+                            <option value="{{ pdv.id }}">{{ pdv.nombre }} ({{ pdv.zona or '' }}{% if pdv.distrito %} - {{ pdv.distrito }}{% endif %})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="dia">Día de Visita</label>
+                        <select id="dia" name="dia" required>
+                            <option value="Lunes">Lunes</option>
+                            <option value="Martes">Martes</option>
+                            <option value="Miércoles">Miércoles</option>
+                            <option value="Jueves">Jueves</option>
+                            <option value="Viernes">Viernes</option>
+                            <option value="Sábado">Sábado</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-submit" style="background:#f59e0b; box-shadow:0 4px 10px rgba(245, 158, 11, 0.2);">Agregar Visita</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2>Ausencias Semana Operativa</h2>
+                {% if ausencias_registradas %}
+                <div style="display:flex; flex-direction:column; gap:10px;">
+                    {% for ausencia, promotor in ausencias_registradas %}
+                    <div style="padding:12px; border:1px solid var(--card-border); border-radius:12px; background:rgba(17,24,39,0.35);">
+                        <div style="font-weight:700;">{{ promotor.nombre }}</div>
+                        <div style="font-size:0.85rem; color:var(--text-sub);">{{ ausencia.dia }} · {{ ausencia.fecha }}</div>
+                        <div style="font-size:0.85rem; color:var(--text-sub);">{{ ausencia.motivo or 'Sin motivo registrado' }}</div>
+                        <div style="margin-top:10px;">
+                            <a
+                                href="/delete_absence/{{ ausencia.id }}"
+                                class="btn-action-nav btn-action-danger"
+                                title="Eliminar ausencia"
+                                onclick="return confirm('¿Seguro que desea eliminar esta ausencia?')"
+                            >Eliminar</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p style="font-size:0.85rem; color:var(--text-sub);">No hay ausencias registradas para la plaza activa.</p>
+                {% endif %}
+            </div>
+
+            <div class="card">
+                <h2>Acceso de Promotores</h2>
+                {% if promotores_con_usuario %}
+                <div style="display:flex; flex-direction:column; gap:10px;">
+                    {% for promotor in promotores_con_usuario %}
+                    <div style="padding:12px; border:1px solid var(--card-border); border-radius:12px; background:rgba(17,24,39,0.35);">
+                        <div style="font-weight:700;">{{ promotor.nombre }}</div>
+                        <div style="font-size:0.85rem; color:var(--text-sub);">{{ promotor.usuario.email }}</div>
+                        <form method="POST" action="/reset_promotor_password/{{ promotor.id }}" style="margin-top:10px;">
+                            <button
+                                type="submit"
+                                class="btn-action-nav"
+                                style="background:#0ea5e9; border-color:#0ea5e9; color:white; padding:8px 12px;"
+                                onclick="return confirm('Se generará una nueva contraseña temporal. ¿Desea continuar?')"
+                            >Resetear contraseña</button>
+                        </form>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p style="font-size:0.85rem; color:var(--text-sub);">No hay promotores con usuario vinculado en la plaza activa.</p>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="map-container">
+            <iframe src="{{ url_for('static', filename='mapa.html') }}"></iframe>
+        </div>
+
+        <div class="card table-card">
+            <div class="table-header">
+                <h2>Cronograma de Visitas Generadas</h2>
+                <div class="table-filters">
+                    <span style="font-size:0.85rem; color:var(--text-sub); font-weight:600;">Plaza activa: {{ zona_seleccionada or 'Sin datos' }}</span>
+                    <!-- Export Options -->
+                    <a href="{{ url_for('export_routes_excel', zona=zona_seleccionada) }}" class="btn-action-nav" style="background:#10b981; border-color:#10b981; padding:8px 12px; color:white; font-weight:600;" title="Descargar como Excel">📊 Exportar Excel</a>
+                    <a href="javascript:window.print()" class="btn-action-nav" style="background:#6366f1; border-color:#6366f1; padding:8px 12px; color:white; font-weight:600;" title="Descargar como PDF">📄 Exportar PDF</a>
+                    <span style="color:rgba(255,255,255,0.15); margin:0 8px;">|</span>
+                    
+                    <label style="display:flex; align-items:center; gap:8px; font-size:0.85rem; color:var(--text-sub);">
+                        Filtrar Promotor:
+                        <select id="promotorFilter" onchange="filterTable()">
+                            <option value="todos">Todos</option>
+                            {% for promotor in promotores_disponibles %}
+                            <option value="{{ promotor.nombre }}">{{ promotor.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                    <label style="display:flex; align-items:center; gap:8px; font-size:0.85rem; color:var(--text-sub);">
+                        Filtrar Semana:
+                        <select id="semanaFilter" onchange="filterTable()">
+                            <option value="todas">Todas</option>
+                            <option value="1">Semana 1</option>
+                            <option value="2">Semana 2</option>
+                            <option value="3">Semana 3</option>
+                            <option value="4">Semana 4</option>
+                        </select>
+                    </label>
+                </div>
+            </div>
+
+            <div class="table-wrapper">
+                <table id="tablaPDV">
+                    <thead>
+                        <tr>
+                            <th>Promotor</th>
+                            <th>Capacidad</th>
+                            <th>Semana</th>
+                            <th>Día</th>
+                            <th>Visita N°</th>
+                            <th>Punto de Venta</th>
+                            <th>Prioridad</th>
+                            {% if current_user.rol in ['admin', 'analista'] %}
+                            <th>Acciones</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in tabla %}
+                        <tr>
+                            <td><strong>{{ row['Promotor'] }}</strong></td>
+                            <td>{{ row['Capacidad'] }}</td>
+                            <td>Semana {{ row['Semana'] }}</td>
+                            <td><span class="badge-dia">{{ row['Dia'] }}</span></td>
+                            <td>{{ row['Orden'] }}</td>
+                            <td>{{ row['Punto de Venta'] }}</td>
+                            <td>{{ row['Prioridad']|capitalize }}</td>
+                            {% if current_user.rol in ['admin', 'analista'] %}
+                            <td>
+                                <a href="/move_route/{{ row['Ruta_Id'] }}/up" class="btn-action-nav" title="Subir Orden">▲</a>
+                                <a href="/move_route/{{ row['Ruta_Id'] }}/down" class="btn-action-nav" title="Bajar Orden">▼</a>
+                                <a href="/delete_route/{{ row['Ruta_Id'] }}" class="btn-action-nav btn-action-danger" title="Eliminar de la ruta" onclick="return confirm('¿Seguro que desea eliminar esta visita de la ruta?')">🗑️</a>
+                            </td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function filterTable() {
+            const prom = document.getElementById("promotorFilter").value;
+            const sem = document.getElementById("semanaFilter").value;
+            const rows = document.querySelectorAll("#tablaPDV tbody tr");
+
+            rows.forEach(row => {
+                const pText = row.cells[0].textContent.trim();
+                const sText = row.cells[2].textContent; // "Semana 1" etc.
+                
+                const showProm = (prom === "todos" || pText === prom);
+                const showSem = (sem === "todas" || sText.includes("Semana " + sem));
+                
+                row.style.display = (showProm && showSem) ? "" : "none";
+            });
+        }
+    </script>
+</body>
+</html>

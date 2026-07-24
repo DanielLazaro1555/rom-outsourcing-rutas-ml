@@ -1,0 +1,19 @@
+# .dockerignore
+.git
+.gitignore
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+.pytest_cache/
+.vscode/
+.idea/
+AVPF2-Integrador2-Grupo03.docx.md
+*.db
+*.sqlite
+*.sqlite3
+pgdata/
+logs/
+private/

@@ -1,0 +1,31 @@
+# Archivos compilados de Python
+__pycache__/
+*.pyc
+
+# Entorno virtual
+venv/
+.env
+
+# Archivos temporales
+*.log
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de VS Code opcionales
+.vscode/
+
+# Si luego no quieres subir datos grandes
+# data/*.csv
+
+# Bases de datos y volumen de Podman
+instance/
+pgdata/
+*.db
+*.sqlite
+*.sqlite3
+logs/
+
+# Carpeta de memoria interna (privada)
+private/

@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  db:
+    image: docker.io/postgres:15-alpine
+    container_name: sistema-rutas-db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=rutas_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: always
+
+  web:
+    build:
+      context: .
+      dockerfile: Containerfile
+    container_name: sistema-rutas-promotores
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app:z
+      - /app/venv  # Evita sobreescribir las dependencias del contenedor con el venv del host
+    environment:
+      - HOST=0.0.0.0
+      - PORT=5000
+      - FLASK_ENV=development
+      - DATABASE_URL=postgresql://postgres:${DB_PASSWORD}@db:5432/rutas_db
+      - ACCESS_KEY
+      - DB_PASSWORD
+    depends_on:
+      - db
+    restart: always
+
+volumes:
+  pgdata:
